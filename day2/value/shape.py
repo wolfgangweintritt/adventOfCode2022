@@ -16,6 +16,11 @@ class Shape(Enum):
                 return Shape.PAPER
             case 'C' | 'Z':
                 return Shape.SCISSORS
+    @classmethod
+    def fromShapeAndResult(cls, player1Shape: 'Shape', neededResult: GameResult) -> 'Shape':
+        player2Shapes = [Shape.ROCK, Shape.PAPER, Shape.SCISSORS]
+        return next(filter(lambda player2Shape: player1Shape.compare(player2Shape) == neededResult, player2Shapes))
+
     def compare(self, x: 'Shape') -> GameResult:
         if (x == Shape.PAPER and self == Shape.ROCK) or (x == Shape.SCISSORS and self == Shape.PAPER) or (x == Shape.ROCK and self == Shape.SCISSORS):
             return GameResult.WIN
