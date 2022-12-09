@@ -1,4 +1,4 @@
-def main(filePath: str) -> int:
+def part1(filePath: str) -> int:
     inputFile = open(filePath, 'r')
     lines = inputFile.readlines()
     inputFile.close()
@@ -6,13 +6,28 @@ def main(filePath: str) -> int:
     return sum(commonItems)
 
 
-def splitLine(line: str) -> tuple[str, str]:
+def part2(filePath: str) -> int:
+    inputFile = open(filePath, 'r')
+    lines = inputFile.readlines()
+    inputFile.close()
+    triples = []
+    for c in range(0, len(lines), 3):
+        triples.append(lines[c:c+3])
+    badges = map(lambda triple: itemScore(findCommonItem(triple)), triples)
+    return sum(badges)
+
+
+def splitLine(line: str) -> list[str]:
     splitPoint = int ((len(line.rstrip()))/2)
-    return line[:splitPoint], line[splitPoint:]
+    return [line[:splitPoint], line[splitPoint:]]
 
 
-def findCommonItem(lineSplit: tuple[str, str]) -> str:
-    return next(filter(lambda item: lineSplit[1].find(item) > -1, lineSplit[0]))
+def findCommonItem(itemList: list[str]) -> str:
+    return next(filter(lambda item: findCommonItemList(item, itemList[1:]), itemList[0]))
+
+
+def findCommonItemList(item: str, rucksacks: list[str]) -> bool:
+    return len(list(filter(lambda rucksack: rucksack.find(item) > -1, rucksacks))) == len(rucksacks)
 
 
 def itemScore(item: str) -> int:
@@ -22,4 +37,5 @@ def itemScore(item: str) -> int:
 
 
 if __name__ == '__main__':
-    print(main('input.txt'))
+    print(part1('input.txt'))
+    print(part2('input.txt'))
