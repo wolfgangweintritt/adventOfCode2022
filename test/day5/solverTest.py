@@ -1,16 +1,20 @@
 import unittest
 
-from day5.solver import part1
+from day5.solver import main
 
 
 class TestDay5(unittest.TestCase):
     def test_example_input(self):
-        containsCount = part1('Fixtures/example_input.txt')
-        self.assertEqual('CMZ', containsCount)
+        topCrates = main('Fixtures/example_input.txt', True)
+        self.assertEqual('CMZ', topCrates)
+        topCrates = main('Fixtures/example_input.txt', False)
+        self.assertEqual('MCD', topCrates)
 
     def test_small_input(self):
-        containsCount = part1('Fixtures/small_input.txt')
-        self.assertEqual('FDC', containsCount)
+        topCrates = main('Fixtures/small_input.txt', True)
+        self.assertEqual('FDC', topCrates)
+        topCrates = main('Fixtures/small_input.txt', False)
+        self.assertEqual('ADF', topCrates)
 
 
 if __name__ == '__main__':

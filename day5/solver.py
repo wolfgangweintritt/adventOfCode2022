@@ -1,7 +1,7 @@
 import re
 
 
-def part1(filePath: str) -> str:
+def main(filePath: str, reverse: bool) -> str:
     inputFile = open(filePath, 'r')
     lines = inputFile.readlines()
     inputFile.close()
@@ -30,10 +30,13 @@ def part1(filePath: str) -> str:
         fromStack = stacks[move.fromColumn]
         toStack = stacks[move.toColumn]
         cratesToMove = fromStack[-move.amount:]
-        toStack.extend(cratesToMove[::-1])
+        if reverse:
+            cratesToMove.reverse()
+        toStack.extend(cratesToMove)
         fromStack[len(fromStack) - move.amount:] = []
 
     return ''.join(list(map(lambda stack: stack[-1], stacks)))
+
 
 class Move:
     amount = None
@@ -51,10 +54,6 @@ class Move:
         return Move(int(numbers[0]), int(numbers[1]) - 1, int(numbers[2]) - 1)
 
 
-def part2(filePath: str) -> str:
-    pass
-
-
 if __name__ == '__main__':
-    print(part1('input.txt'))
-    print(part2('input.txt'))
+    print(main('input.txt', True))
+    print(main('input.txt', False))
