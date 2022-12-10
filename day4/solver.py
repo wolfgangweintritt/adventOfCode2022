@@ -6,6 +6,14 @@ def part1(filePath: str) -> int:
     return len(list(filter(lambda sectionRangePair: sectionRangePair.contains(), sectionRangePairs)))
 
 
+def part2(filePath: str) -> int:
+    inputFile = open(filePath, 'r')
+    lines = inputFile.readlines()
+    inputFile.close()
+    sectionRangePairs = map(lambda line: SectionRangePair.createFromLine(line), lines)
+    return len(list(filter(lambda sectionRangePair: sectionRangePair.overlaps(), sectionRangePairs)))
+
+
 class SectionRange:
     def __init__(self, start: int, end: int) -> None:
         self.start = start
@@ -13,6 +21,9 @@ class SectionRange:
 
     def contains(self, other: 'SectionRange') -> bool:
         return other.start >= self.start and other.end <= self.end
+
+    def overlaps(self, other: 'SectionRange') -> bool:
+        return (other.start >= self.start and other.start <= self.end) or (other.end >= self.start and other.end <= self.end)
 
     @classmethod
     def createFromString(cls, sectionRangeString: str) -> 'SectionRange':
@@ -33,6 +44,10 @@ class SectionRangePair:
     def contains(self) -> bool:
         return self.section1.contains(self.section2) or self.section2.contains(self.section1)
 
+    def overlaps(self) -> bool:
+        return self.section1.overlaps(self.section2) or self.section2.overlaps(self.section1)
+
 
 if __name__ == '__main__':
     print(part1('input.txt'))
+    print(part2('input.txt'))
