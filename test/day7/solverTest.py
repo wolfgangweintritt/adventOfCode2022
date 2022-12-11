@@ -5,7 +5,7 @@ from day7.solver import main
 
 class TestDay7(unittest.TestCase):
     def test_example_input_1(self):
-        dirSizes = main('Fixtures/example_input.txt', 10000)
+        dirSizes = main('Fixtures/example_input.txt', 100000)
         self.assertEqual(95437, dirSizes)
 
 
