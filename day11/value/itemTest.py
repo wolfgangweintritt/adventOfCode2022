@@ -1,3 +1,4 @@
+from day11.value.item import Item
 from day11.value.monkey import Monkey
 
 
@@ -7,5 +8,8 @@ class ItemTest:
         self.__trueMonkey = trueMonkey
         self.__falseMonkey  = falseMonkey
 
-    def executeTest(self, number: int) -> Monkey:
-        return self.__trueMonkey if number % self.__divisibleBy == 0 else self.__falseMonkey
+    def getDivisor(self) -> int:
+        return self.__divisibleBy
+
+    def executeTest(self, item: Item) -> Monkey:
+        return self.__trueMonkey if item.isDivisibleBy(self.__divisibleBy) else self.__falseMonkey
