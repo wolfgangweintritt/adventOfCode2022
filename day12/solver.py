@@ -5,11 +5,28 @@ def part1(filePath: str) -> int:
 
     map = Map.fromLines(lines)
 
+    map.startNode.distance = 0
     while (currentNode := map.visitUnvisitedSquareWithSmallestDistance()) != map.endNode:
-        for neighborNode in map.getUnvisitedNeighbors(currentNode):
+        for neighborNode in map.getUnvisitedNeighbors(currentNode, True):
             map.updateNeighborDistance(currentNode, neighborNode)
 
-    return map.endNode.distance
+    return currentNode.distance
+
+
+def part2(filePath: str) -> int:
+    with open(filePath) as f:
+        lines = f.read().splitlines()
+
+    map = Map.fromLines(lines)
+
+    # go from E to any a/S (easier than to go from any a/S to E)
+    # Start with E instead of S
+    map.endNode.distance = 0
+    while (currentNode := map.visitUnvisitedSquareWithSmallestDistance()).height != 1: # 1 = a
+        for neighborNode in map.getUnvisitedNeighbors(currentNode, False):
+            map.updateNeighborDistance(currentNode, neighborNode)
+
+    return currentNode.distance
 
 
 class Square:
@@ -23,17 +40,17 @@ class Square:
         self.y = y
         self.distance = 2**32
 
-    def setDistance(self, distance):
-        self.distance = distance
-
     def toKey(self) -> str:
         return "{}.{}".format(self.x, self.y)
 
     def __lt__(self, other: 'Square'):
         return self.distance < other.distance
 
-    def isVisitableFrom(self, other: 'Square'):
-        return self.height <= other.height + 1
+    def isVisitableFrom(self, fromSquare: 'Square', startToFinish: bool):
+        if startToFinish:
+            return self.height <= fromSquare.height + 1
+
+        return fromSquare.height <= self.height + 1
 
 
 class Map:
@@ -51,7 +68,6 @@ class Map:
                 squareObj = Square(lineIdx, colIdx, square)
                 if square == 'S':
                     startNode = squareObj
-                    startNode.distance = 0
                 if square == 'E':
                     endNode = squareObj
                 unvisitedNodes[squareObj.toKey()] = squareObj
@@ -61,9 +77,9 @@ class Map:
         neighborNode.distance = currentNode.distance + 1
 
     # visited neighbors can never be found with a shorter distance, so we don't need to worry about them
-    def getUnvisitedNeighbors(self, node: Square) -> list[Square]:
+    def getUnvisitedNeighbors(self, node: Square, startToFinish: bool) -> list[Square]:
         neighborKeys = ["{}.{}".format(node.x - 1, node.y), "{}.{}".format(node.x + 1, node.y), "{}.{}".format(node.x, node.y - 1), "{}.{}".format(node.x, node.y + 1)]
-        return list(map(lambda key: self.unvisitedNodes[key], filter(lambda key: key in self.unvisitedNodes and self.unvisitedNodes[key].isVisitableFrom(node), neighborKeys)))
+        return list(map(lambda key: self.unvisitedNodes[key], filter(lambda key: key in self.unvisitedNodes and self.unvisitedNodes[key].isVisitableFrom(node, startToFinish), neighborKeys)))
 
     def visitUnvisitedSquareWithSmallestDistance(self) -> Square:
         neighborWithSmallestDistance = sorted(self.unvisitedNodes.values())[0]
@@ -74,3 +90,4 @@ class Map:
 
 if __name__ == '__main__':
     print(part1('input.txt'))
+    print(part2('input.txt'))
